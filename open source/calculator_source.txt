@@ -1,0 +1,366 @@
+{$CLEO}
+{$INCLUDE SF}
+0000: NOP
+repeat
+    wait 50
+until 0AFA:  is_samp_available
+
+0B34: samp register_client_command "cc" to_label @calculate
+0AC8: 31@ = allocate_memory_size 64
+0AC8: 30@ = allocate_memory_size 64
+0AC8: 29@ = allocate_memory_size 64
+0AC8: 28@ = allocate_memory_size 64
+0AC8: 25@ = allocate_memory_size 124 //formula
+0AC8: 26@ = allocate_memory_size 64 //result
+27@ = 0 //27@ = switcher
+
+0B5A: get_screen_resolution 22@ 23@
+22@ /= 10
+22@ *= 4
+23@ /= 10
+23@ *= 1
+
+0B80: dialog 24@ = create "Calculator"
+0B84: dialog 24@ set_pos_XY 22@ 23@ size 300 120
+0B91: dialog 24@ add_static id 1 text "Formula" pos_XY 25 20 size 300 20
+0B91: dialog 24@ add_static id 2 text "=" pos_XY 105 40 size 300 20
+0B91: dialog 24@ add_static id 3 text "Result" pos_XY 25 60 size 300 20 
+0B86: dialog 24@ set_visible false
+
+
+while true
+wait 0
+    if 27@ == 1
+    then
+    27@ = 0
+    33@ = 0
+    0B94: dialog 24@ set_control 1 text 25@
+    0B94: dialog 24@ set_control 3 text 26@
+    0B86: dialog 24@ set_visible true
+    end
+    
+    if 33@ > 15000
+    then
+    0B86: dialog 24@ set_visible false
+    end
+end
+
+:calculate
+SAMP.IsCommandTyped(0@) 
+//
+//4 numbers
+//             
+if 
+0AD4: $nefolosit = 0@ format "%d%c%d%c%d%c%d" 1@ 31@ 2@ 30@ 3@ 29@ 4@
+then
+0AD3: 31@ = format "%c" 31@
+0AD3: 30@ = format "%c" 30@
+0AD3: 29@ = format "%c" 29@
+
+0085: 5@ = 1@ // result
+0085: 6@ = 2@ // num2
+0085: 7@ = 3@ // num3
+0093: 1@ = integer 1@ to_float
+0093: 2@ = integer 2@ to_float
+0093: 3@ = integer 3@ to_float
+0093: 4@ = integer 4@ to_float
+0093: 5@ = integer 5@ to_float
+0093: 6@ = integer 6@ to_float
+0093: 7@ = integer 7@ to_float
+    if 0AB1: @p_3 3 31@ 30@ 29@
+    then
+    0AB1: @do_maths 3 num 5@ num2 2@ operator 31@ _returnedNum 5@
+    0AB1: @do_maths 3 num 5@ num2 3@ operator 30@ _returnedNum 5@
+    0AB1: @do_maths 3 num 5@ num2 4@ operator 29@ _returnedNum 5@  
+    else  
+        if 0AB1: @n_2 2 30@ 29@
+        then
+        0AB1: @do_maths 3 num 5@ num2 2@ operator 31@ _returnedNum 5@
+        0AB1: @do_maths 3 num 5@ num2 3@ operator 30@ _returnedNum 5@
+        0AB1: @do_maths 3 num 5@ num2 4@ operator 29@ _returnedNum 5@
+        else                
+            if 0AB1: @p_n 2 30@ 29@
+            then
+            0AB1: @do_maths 3 num 2@ num2 3@ operator 30@ _returnedNum 2@
+            0AB1: @do_maths 3 num 5@ num2 2@ operator 31@ _returnedNum 5@
+            0AB1: @do_maths 3 num 5@ num2 4@ operator 29@ _returnedNum 5@
+            else
+                if 0AB1: @p_n 2 29@ 30@
+                then
+                0AB1: @do_maths 3 num 3@ num2 4@ operator 29@ _returnedNum 3@
+                0AB1: @do_maths 3 num 5@ num2 2@ operator 31@ _returnedNum 5@
+                0AB1: @do_maths 3 num 5@ num2 3@ operator 30@ _returnedNum 5@ 
+                else
+                    if 0AB1: @p_2 2 30@ 29@ 
+                    then
+                    0AB1: @do_maths 3 num 2@ num2 3@ operator 30@ _returnedNum 2@
+                    0AB1: @do_maths 3 num 2@ num2 4@ operator 29@ _returnedNum 2@ 
+                    0AB1: @do_maths 3 num 5@ num2 2@ operator 31@ _returnedNum 5@ 
+                    else
+                    0AF8: samp add_message_to_chat "Error: Unknown order of operations (the script is incorrect)" color -1             
+                    end
+                end
+            end
+        end
+    end
+
+0AD3: 25@ = format "%.0f %s %.0f %s %.0f %s %.0f" 1@ 31@ 6@ 30@ 7@ 29@ 4@
+    if 0AB1: @decimal_check_result 1 5@
+    then    
+    0AD3: 26@ = format "%0.4f" 5@
+    else
+    0AD3: 26@ = format "%.0f" 5@ 
+    end   
+    27@ = 1    
+else
+    //
+    //3 numbers
+    //
+    if 
+    0AD4: $nefolosit = 0@ format "%d%c%d%c%d" 1@ 31@ 2@ 30@ 3@
+    then
+    0AD3: 31@ = format "%c" 31@
+    0AD3: 30@ = format "%c" 30@
+    0085: 4@ = 1@ // result
+    0085: 5@ = 2@ // num2
+    0093: 1@ = integer 1@ to_float
+    0093: 2@ = integer 2@ to_float
+    0093: 3@ = integer 3@ to_float
+    0093: 4@ = integer 4@ to_float
+    0093: 5@ = integer 5@ to_float
+    
+        if 0AB1: @p_2 2 31@ 30@
+        then
+        0AB1: @do_maths 3 num 4@ num2 2@ operator 31@ _returnedNum 4@ 
+        0AB1: @do_maths 3 num 4@ num2 3@ operator 30@ _returnedNum 4@ 
+        else       
+            if
+            0AB1: @no_priority 1 30@ //no
+            then
+            0AB1: @do_maths 3 num 4@ num2 2@ operator 31@ _returnedNum 4@ 
+            0AB1: @do_maths 3 num 4@ num2 3@ operator 30@ _returnedNum 4@                      
+            else
+            0AB1: @do_maths 3 num 2@ num2 3@ operator 30@ _returnedNum 2@           
+            0AB1: @do_maths 3 num 4@ num2 2@ operator 31@ _returnedNum 4@
+            end         
+        end
+        
+    0AD3: 25@ = format "%.0f %s %.0f %s %.0f" 1@ 31@ 5@ 30@ 3@ 
+        if 0AB1: @decimal_check_result 1 4@
+        then        
+        0AD3: 26@ = format "%0.4f" 4@
+        else
+        0AD3: 26@ = format "%.0f" 4@ 
+        end 
+        27@ = 1 
+    else
+    //
+    //2 numbers
+    //
+        if
+        0AD4: $nefolosit = 0@ format "%d%c%d" 1@ 31@ 2@
+        then
+        0AD3: 31@ = format "%c" 31@
+        0085: 4@ = 1@ // result
+        0093: 1@ = integer 1@ to_float
+        0093: 2@ = integer 2@ to_float
+        0093: 4@ = integer 4@ to_float
+        0AB1: @do_maths 3 num 4@ num2 2@ operator 31@ _returnedNum 4@
+         
+        0AD3: 25@ = format "%.0f %s %.0f" 1@ 31@ 2@
+            if 0AB1: @decimal_check_result 1 4@    
+            then            
+            0AD3: 26@ = format "%0.4f" 4@
+            else
+            0AD3: 26@ = format "%.0f" 4@
+            end
+            27@ = 1 
+        else
+        printf "Usage: /cc 2+2+2+2 [ + - / x * ]" 5000
+        end    
+    end
+end
+SAMP.CmdRet
+
+//0AB1: @do_maths 3 num num2 operator _returnedNum 
+:do_maths
+if 0C14: strcmp string1 2@ string2 "+"
+then
+005B: 0@ += 1@  // (float)
+else
+    if 0C14: strcmp string1 2@ string2 "-"
+    then
+    0063: 0@ -= 1@  // (float)
+    else
+        if or
+        0C14: strcmp string1 2@ string2 "x"
+        0C14: strcmp string1 2@ string2 "*"
+        then                  
+        006B: 0@ *= 1@  // (float)
+        else
+            if 0C14: strcmp string1 2@ string2 "/"
+            then
+            0073: 0@ /= 1@ // (float)
+            end
+        end
+    end                     
+end
+0AB2: ret 1 0@
+
+//if 0AB1: @ 1
+:p_3
+31@ = 0
+if or
+0C14: strcmp string1 0@ string2 "x"
+0C14: strcmp string1 0@ string2 "*"
+0C14: strcmp string1 0@ string2 "/"
+then
+31@++
+end
+
+if or
+0C14: strcmp string1 1@ string2 "x"
+0C14: strcmp string1 1@ string2 "*"
+0C14: strcmp string1 1@ string2 "/"
+then
+31@++
+end
+
+if or
+0C14: strcmp string1 2@ string2 "x"
+0C14: strcmp string1 2@ string2 "*"
+0C14: strcmp string1 2@ string2 "/"
+then
+31@++
+end
+
+if 31@ == 3
+then
+0485:  return_true
+else
+059A:  return_false
+end
+0AB2: ret 0
+
+:p_2
+31@ = 0
+if or
+0C14: strcmp string1 0@ string2 "x"
+0C14: strcmp string1 0@ string2 "*"
+0C14: strcmp string1 0@ string2 "/"
+then
+31@++
+end
+
+if or
+0C14: strcmp string1 1@ string2 "x"
+0C14: strcmp string1 1@ string2 "*"
+0C14: strcmp string1 1@ string2 "/"
+then
+31@++
+end
+
+if 31@ == 2
+then
+0485:  return_true
+else
+059A:  return_false
+end
+0AB2: ret 0
+
+
+:n_2
+31@ = 0
+if or
+0C14: strcmp string1 0@ string2 "x"
+0C14: strcmp string1 0@ string2 "*"
+0C14: strcmp string1 0@ string2 "/"
+then
+31@++
+end
+
+if or
+0C14: strcmp string1 1@ string2 "x"
+0C14: strcmp string1 1@ string2 "*"
+0C14: strcmp string1 1@ string2 "/"
+then
+31@++
+end
+
+if 31@ > 0
+then
+059A:  return_false
+else
+0485:  return_true
+end
+0AB2: ret 0
+
+
+:p_n
+31@ = 0
+if or
+0C14: strcmp string1 0@ string2 "x"
+0C14: strcmp string1 0@ string2 "*"
+0C14: strcmp string1 0@ string2 "/"
+then
+31@++
+end
+
+if or
+0C14: strcmp string1 1@ string2 "x"
+0C14: strcmp string1 1@ string2 "*"
+0C14: strcmp string1 1@ string2 "/"
+then
+wait 0
+else
+31@++
+end
+
+if 31@ == 2
+then
+0485:  return_true
+else
+059A:  return_false
+end
+0AB2: ret 0
+
+
+//if 0AB1: @is_priority 1
+:priority
+if or
+0C14: strcmp string1 0@ string2 "x"
+0C14: strcmp string1 0@ string2 "*"
+0C14: strcmp string1 0@ string2 "/"
+then
+0485:  return_true
+else
+059A:  return_false
+end
+0AB2: ret 0
+
+//if 0AB1: @not_priority 1
+:no_priority
+if or
+0C14: strcmp string1 0@ string2 "x"
+0C14: strcmp string1 0@ string2 "*"
+0C14: strcmp string1 0@ string2 "/"
+then
+059A:  return_false
+else
+0485:  return_true
+end
+0AB2: ret 0
+
+//if 0AB1: @decimal_check_result 1
+:decimal_check_result
+0092: 1@ = float 0@ to_integer
+0093: 1@ = integer 1@ to_float
+if or
+0025:   1@ > 0@  // (float)
+0025:   0@ > 1@  // (float)
+then
+0485:  return_true
+else
+059A:  return_false
+end
+0AB2: ret 0
