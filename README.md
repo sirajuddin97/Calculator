@@ -43,5 +43,5 @@ I had a crash while testing the dialog box but didn't remember the formula I use
 The result keeps being displayed on the screen for 15 seconds after entering the command.
 
 ## Thanks to
-Y_Less
+Y_Less<br>
 Monday
