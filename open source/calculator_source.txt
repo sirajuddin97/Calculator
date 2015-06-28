@@ -182,7 +182,6 @@ else
 end
 SAMP.CmdRet
 
-//0AB1: @do_maths 3 num num2 operator _returnedNum 
 :do_maths
 if 0C14: strcmp string1 2@ string2 "+"
 then
@@ -351,7 +350,6 @@ else
 end
 0AB2: ret 0
 
-//if 0AB1: @decimal_check_result 1
 :decimal_check_result
 0092: 1@ = float 0@ to_integer
 0093: 1@ = integer 1@ to_float
